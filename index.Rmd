@@ -4,7 +4,7 @@ output: html_document
 ---
 
 
-```{r}
+```{r include=FALSE}
 
 library(googleVis)
 library(dplyr)
@@ -38,15 +38,24 @@ re_generation <- merge(re_generation, solar, by = c('GEO', 'TIME'), all.x = T)
 names(re_generation)[4] <- "solar_gen" 
 re_generation$re_gen <- re_generation$wind_gen + re_generation$solar_gen
 names(re_generation)[1] <- "country"
+re_generation$country[re_generation$country == "Germany (until 1990 former territory of the FRG)" ] <- "Germany"
 
-re_generation <- re_generation[which(re_generation$TIME == "2014"),]
+re_generation <- re_generation[which(re_generation$TIME == "2013"),]
 re_generation <- select(re_generation, re_gen, country)
+
+
+
+```
+
+
+```{r results='asis', echo=FALSE}
 
 # Plot
 re_map <- gvisGeoChart(re_generation, locationvar = 'country',
                       colorvar = 're_gen',
                       options = list(
-                        colors = "['#fff7bc', '#d95f0e']"
+                        colors = "['#fff7bc', '#d95f0e']",
+                        region ="150"
                           ))
 
 print(re_map, tag = 'chart')
